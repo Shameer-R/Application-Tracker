@@ -1,1 +1,3 @@
 /database/application_database.db
+.idea
+/database/__pycache__
