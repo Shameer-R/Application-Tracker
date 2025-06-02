@@ -54,22 +54,26 @@ def add_application():
 
     dictionary_to_database()
 
-def update_application():
-    pass
-
-def remove_application():
+def get_application_from_input():
     all_applications = application_database.get_all_applications()
-
-    print("\nSelect number of application to remove (Leave blank if none):")
 
     for i in range(len(all_applications)):
         print(f"{i} - {all_applications[i][0]}")
-
 
     selected_input = int(input("\nEnter Number: "))
 
     # Pull name of company from input
     selected_application = all_applications[selected_input][0]
+
+    return selected_application
+
+def update_application():
+    pass
+
+def remove_application():
+    print("\nSelect number of application to remove (Leave blank if none):")
+
+    selected_application = get_application_from_input()
 
     application_database.delete_application(selected_application)
 
