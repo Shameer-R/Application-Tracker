@@ -4,6 +4,7 @@ import database.Database
 
 application_database = database.Database.Database()
 
+
 # Prompts given to the user when the application starts
 def starting_prompt():
     starting_input = input("Select Key: \n1. Add an application\n2. Update an application\n3. Delete an application\n")
@@ -23,10 +24,12 @@ ApplicationDictionary = {
     "notes": None
 }
 
+
 # Transfer prompts to dictionary
 def prompt_to_dictionary(prompt, field):
-    new_prompt = input(prompt).replace(" ", "") # Remove whitespace from prompt
+    new_prompt = input(prompt).replace(" ", "")  # Remove whitespace from prompt
     ApplicationDictionary[field] = new_prompt
+
 
 # Input data from dictionary to database
 def dictionary_to_database():
@@ -36,11 +39,13 @@ def dictionary_to_database():
         ApplicationDictionary["notes"]
     )
 
+
 # Get date in YYYY-MM-DD format
 def format_todays_date():
     today = str(datetime.today())
     today_format = today.split(" ")
     return today_format[0]
+
 
 # Start process for adding application
 def add_application():
@@ -54,21 +59,41 @@ def add_application():
 
     dictionary_to_database()
 
+
 def get_application_from_input():
     all_applications = application_database.get_all_applications()
 
     for i in range(len(all_applications)):
         print(f"{i} - {all_applications[i][0]}")
 
-    selected_input = int(input("\nEnter Number: "))
+    selected_input = int(input("\nEnter Number: \n"))
 
     # Pull name of company from input
     selected_application = all_applications[selected_input][0]
 
     return selected_application
 
+
+ApplicationList = ["company", "position", "status", "date_applied", "notes"]
+
 def update_application():
-    pass
+    print("\nSelect number of application to update (Leave blank if none): ")
+
+    selected_application = get_application_from_input()
+
+    print(f"\nWhat field would you like to update for {selected_application}?\n")
+
+    for i in range(len(ApplicationList)):
+        print(f"{i} - {ApplicationList[i]}")
+
+    selected_input = int(input("\nEnter Number: \n"))
+
+    selected_field = ApplicationList[selected_input]
+
+    updated_field = input(f"\nEnter your desired change for {selected_application}'s {selected_field}: ")
+
+    application_database.update_field(selected_application, selected_field, updated_field)
+
 
 def remove_application():
     print("\nSelect number of application to remove (Leave blank if none):")
@@ -76,6 +101,7 @@ def remove_application():
     selected_application = get_application_from_input()
 
     application_database.delete_application(selected_application)
+
 
 def main():
     starting_prompt()

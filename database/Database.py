@@ -56,3 +56,18 @@ class Database:
             cursor.close()
 
             print(f"{company_name} has been deleted")
+
+    def update_field(self, company_name, field_name, new_field_value):
+        with sqlite3.connect('../database/application_database.db') as connection:
+            cursor = connection.cursor()
+            update_query = f'''
+            UPDATE Applications
+            SET {field_name} = ? 
+            WHERE company = ?;
+            '''
+
+            cursor.execute(update_query, (new_field_value, company_name,))
+            connection.commit()
+            cursor.close()
+
+            print("Updated field successfully")
