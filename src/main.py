@@ -4,6 +4,8 @@ import database.Database
 from database.Database import Database
 
 application_database = database.Database.Database()
+
+# Prompts given to the user when the application starts
 def starting_prompt():
     starting_input = input("Select Key: \n1. Add an application\n2. Update an application\n")
     if starting_input == "1":
@@ -20,11 +22,13 @@ ApplicationDictionary = {
     "notes": None
 }
 
-def prompt_to_database(prompt, field):
+# Transfer prompts to dictionary
+def prompt_to_dictionary(prompt, field):
     new_prompt = input(prompt).replace(" ", "") # Remove whitespace from prompt
     ApplicationDictionary[field] = new_prompt
 
-def insert_data_into_database():
+# Input data from dictionary to database
+def dictionary_to_database():
     application_database.insert_application(
         ApplicationDictionary["company"], ApplicationDictionary["position"],
         ApplicationDictionary["status"], ApplicationDictionary["date_applied"],
@@ -39,14 +43,14 @@ def format_todays_date():
 
 def add_application():
     print("\n--- Enter Application Information --- ")
-    prompt_to_database("Enter Company: ", "company")
-    prompt_to_database("Enter Position: ", "position")
-    prompt_to_database("Enter Notes (Leave blank if none): ", "notes")
+    prompt_to_dictionary("Enter Company: ", "company")
+    prompt_to_dictionary("Enter Position: ", "position")
+    prompt_to_dictionary("Enter Notes (Leave blank if none): ", "notes")
 
     ApplicationDictionary["status"] = "Pending"
     ApplicationDictionary["date_applied"] = format_todays_date()
 
-    insert_data_into_database()
+    dictionary_to_database()
 
 def update_application():
     pass
