@@ -7,11 +7,13 @@ application_database = database.Database.Database()
 
 # Prompts given to the user when the application starts
 def starting_prompt():
-    starting_input = input("Select Key: \n1. Add an application\n2. Update an application\n")
+    starting_input = input("Select Key: \n1. Add an application\n2. Update an application\n3. Delete an application\n")
     if starting_input == "1":
         add_application()
     elif starting_input == "2":
         update_application()
+    elif starting_input == "3":
+        remove_application()
 
 
 ApplicationDictionary = {
@@ -55,6 +57,9 @@ def add_application():
 
 def update_application():
     pass
+
+def remove_application():
+    application_database.get_all_applications()
 
 def main():
     starting_prompt()
