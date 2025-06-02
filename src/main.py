@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import database.Database
-from database.Database import Database
 
 application_database = database.Database.Database()
 
@@ -59,7 +58,20 @@ def update_application():
     pass
 
 def remove_application():
-    application_database.get_all_applications()
+    all_applications = application_database.get_all_applications()
+
+    print("\nSelect number of application to remove (Leave blank if none):")
+
+    for i in range(len(all_applications)):
+        print(f"{i} - {all_applications[i][0]}")
+
+
+    selected_input = int(input("\nEnter Number: "))
+
+    # Pull name of company from input
+    selected_application = all_applications[selected_input][0]
+
+    application_database.delete_application(selected_application)
 
 def main():
     starting_prompt()

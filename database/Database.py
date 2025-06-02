@@ -24,7 +24,7 @@ class Database:
             INSERT INTO Applications (company, position, status, date_applied, notes)
             VALUES (?, ?, ?, ?, ?);
             '''
-            cursor.execute(insert_query, (company, position, status, date_applied, notes))
+            cursor.execute(insert_query, (company, position, status, date_applied, notes,))
             connection.commit()
             cursor.close()
 
@@ -34,12 +34,25 @@ class Database:
         with sqlite3.connect('../database/application_database.db') as connection:
             cursor = connection.cursor()
             select_query = '''
-            SELECT * FROM Applications;'''
+            SELECT company FROM Applications;'''
 
             cursor.execute(select_query)
 
             all_applications = cursor.fetchall()
 
-            print(all_applications)
-
             cursor.close()
+
+            return all_applications
+
+    def delete_application(self, company_name):
+        with sqlite3.connect('../database/application_database.db') as connection:
+            cursor = connection.cursor()
+            delete_query = '''
+            DELETE FROM Applications 
+            WHERE company = ?;'''
+
+            cursor.execute(delete_query, (company_name,))
+            connection.commit()
+            cursor.close()
+
+            print(f"{company_name} has been deleted")
