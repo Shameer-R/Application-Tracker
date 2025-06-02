@@ -35,12 +35,13 @@ def dictionary_to_database():
         ApplicationDictionary["notes"]
     )
 
-
+# Get date in YYYY-MM-DD format
 def format_todays_date():
     today = str(datetime.today())
     today_format = today.split(" ")
     return today_format[0]
 
+# Start process for adding application
 def add_application():
     print("\n--- Enter Application Information --- ")
     prompt_to_dictionary("Enter Company: ", "company")
