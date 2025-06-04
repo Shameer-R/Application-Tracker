@@ -1,3 +1,5 @@
 /database/application_database.db
 .idea
 /database/__pycache__
+.DS_Store
+src/__pycache__/
