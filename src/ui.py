@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem, QTableWidget, QTableWidgetItem, \
     QHeaderView
+from PyQt5.QtCore import Qt
 
 from src import Database
 application_database = Database.Database()
@@ -15,8 +16,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Application-Tracker')
-        self.resize(500, 500)
-
+        self.resize(900, 600)
         self.createTable()
 
     def createTable(self):
@@ -25,10 +25,19 @@ class MainWindow(QMainWindow):
         self.tableWidget.setColumnCount(5)
         self.tableWidget.setHorizontalHeaderLabels(["Company", "Position", "Status", "Date Applied", "Notes"])
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
+        self.tableWidget.setWordWrap(True)
+        self.tableWidget.setHorizontalScrollMode(QTableWidget.ScrollPerPixel)
+        self.tableWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.tableWidget)
         self.initializeApplications()
+
+        # Set Column Width
+        self.tableWidget.setColumnWidth(company_column, 200)
+        self.tableWidget.setColumnWidth(position_column, 300)
+        self.tableWidget.setColumnWidth(status_column, 65)
+        self.tableWidget.setColumnWidth(date_column, 95)
+        self.tableWidget.setColumnWidth(notes_column, 100)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(notes_column, QHeaderView.Stretch)
 
     def initializeApplications(self):
         all_applications = application_database.get_all_applications()
@@ -49,7 +58,6 @@ class MainWindow(QMainWindow):
             self.tableWidget.setItem(row_index, notes_column, QTableWidgetItem(notes)) # Notes
 
             row_index += 1
-
 
 
 def main():
