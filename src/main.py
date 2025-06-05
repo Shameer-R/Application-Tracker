@@ -1,18 +1,23 @@
 from datetime import datetime
 
-import src.Database
-application_database = src.Database.Database()
+from src import Database
+from src import ui
+
+application_database = Database.Database()
 
 
 # Prompts given to the user when the application starts
 def starting_prompt():
-    starting_input = input("Select Key: \n1. Add an application\n2. Update an application\n3. Delete an application\n")
+    starting_input = input("Select Key: \n1. Add an application\n2. Update an application\n"
+                           "3. Delete an application\n4. Launch UI")
     if starting_input == "1":
         add_application()
     elif starting_input == "2":
         update_application()
     elif starting_input == "3":
         remove_application()
+    elif starting_input == "4":
+        ui.main()
 
 
 ApplicationDictionary = {
@@ -60,7 +65,7 @@ def add_application():
 
 
 def get_application_from_input():
-    all_applications = application_database.get_all_applications()
+    all_applications = application_database.get_all_companies()
 
     for i in range(len(all_applications)):
         print(f"{i} - {all_applications[i][0]}")
@@ -74,6 +79,7 @@ def get_application_from_input():
 
 
 ApplicationList = ["company", "position", "status", "date_applied", "notes"]
+
 
 def update_application():
     print("\nSelect number of application to update (Leave blank if none): ")

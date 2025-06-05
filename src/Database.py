@@ -33,7 +33,7 @@ class Database:
 
             print("Application inserted successfully")
 
-    def get_all_applications(self):
+    def get_all_companies(self):
         with sqlite3.connect(DATABASE_STRING) as connection:
             cursor = connection.cursor()
             select_query = '''
@@ -43,6 +43,19 @@ class Database:
 
             all_applications = cursor.fetchall()
 
+            cursor.close()
+
+            return all_applications
+
+    def get_all_applications(self):
+        with sqlite3.connect(DATABASE_STRING) as connection:
+            cursor = connection.cursor()
+            select_query = '''
+            SELECT * FROM Applications;'''
+
+            cursor.execute(select_query)
+
+            all_applications = cursor.fetchall()
             cursor.close()
 
             return all_applications
