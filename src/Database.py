@@ -73,6 +73,18 @@ class Database:
 
             print(f"{company_name} has been deleted")
 
+    def getApplicationCount(self):
+        with sqlite3.connect(DATABASE_STRING) as connection:
+            cursor = connection.cursor()
+            count_query = '''
+            SELECT COUNT (*) FROM Applications;'''
+            cursor.execute(count_query)
+
+            number_of_applications = cursor.fetchone()[0]
+            cursor.close()
+            connection.commit()
+            return number_of_applications
+
     def update_field(self, company_name, field_name, new_field_value):
         with sqlite3.connect(DATABASE_STRING) as connection:
             cursor = connection.cursor()
