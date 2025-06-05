@@ -18,6 +18,23 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Application-Tracker')
         self.resize(900, 600)
         self.createTable()
+        self.tableWidget.cellClicked.connect(self.getCurrentCompany)
+        self.tableWidget.cellChanged.connect(self.handle_cell_change)
+        self.currentCompany = None
+        self.currentField = None
+
+    def getCurrentCompany(self, row, column):
+        company = self.tableWidget.item(row, company_column)
+        currentItem = self.tableWidget.horizontalHeaderItem(column)
+        if company is not None and currentItem is not None:
+            self.currentCompany = company.text()
+            self.currentField = currentItem.text()
+
+    def handle_cell_change(self, row, column):
+        newField = self.tableWidget.item(row, column)
+        if self.currentCompany and self.currentField is not None and self.currentField != newField.text():
+            application_database.update_field(self.currentCompany, self.currentField, newField.text())
+
 
     def createTable(self):
         self.tableWidget = QTableWidget()
