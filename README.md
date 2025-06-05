@@ -28,6 +28,7 @@ python src/main.py
 ## Technologies Used
 - Python
 - SQLite
+- PyQt5
 
 ## Future Plans
 - Build a simple user interface to make the application more user-friendly | ✅ **Completed 06/05/25**
