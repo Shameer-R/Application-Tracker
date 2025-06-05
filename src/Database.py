@@ -47,6 +47,19 @@ class Database:
 
             return all_applications
 
+    def get_all_applications(self):
+        with sqlite3.connect(DATABASE_STRING) as connection:
+            cursor = connection.cursor()
+            select_query = '''
+            SELECT * FROM Applications;'''
+
+            cursor.execute(select_query)
+
+            all_applications = cursor.fetchall()
+            cursor.close()
+
+            return all_applications
+
     def delete_application(self, company_name):
         with sqlite3.connect(DATABASE_STRING) as connection:
             cursor = connection.cursor()
