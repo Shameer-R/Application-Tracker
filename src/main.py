@@ -17,7 +17,12 @@ def starting_prompt():
     elif starting_input == "3":
         remove_application()
     elif starting_input == "4":
-        ui.main()
+        number_of_applications = application_database.getApplicationCount()
+        if number_of_applications > 0:
+            ui.main()
+        else:
+            print("\nNo applications, you must add one first. Try again.\n")
+            starting_prompt()
 
 
 ApplicationDictionary = {
