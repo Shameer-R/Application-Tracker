@@ -60,7 +60,7 @@ def add_application():
 
 
 def get_application_from_input():
-    all_applications = application_database.get_all_applications()
+    all_applications = application_database.get_all_companies()
 
     for i in range(len(all_applications)):
         print(f"{i} - {all_applications[i][0]}")
