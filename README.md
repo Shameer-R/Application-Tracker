@@ -30,6 +30,6 @@ python src/main.py
 - SQLite
 
 ## Future Plans
-- Build a simple user interface to make the application more user-friendly.
+- Build a simple user interface to make the application more user-friendly | ✅ **Completed 06/05/25**
 - Improve error handling and input validation.
 - Improve data visualization for better tracking of application status and timelines.
