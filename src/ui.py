@@ -2,6 +2,8 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem, QTableWidget, QTableWidgetItem, \
     QHeaderView
 
+from src import Database
+application_database = Database.Database()
 
 class MainWindow(QMainWindow):
     def __init__(self):

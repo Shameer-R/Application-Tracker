@@ -1,7 +1,7 @@
 from datetime import datetime
 
-import src.Database
-application_database = src.Database.Database()
+from src import Database
+application_database = Database.Database()
 
 
 # Prompts given to the user when the application starts
