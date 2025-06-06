@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem,
 from PyQt5.QtCore import Qt
 
 from src import Database
-application_database = Database.Database()
 
 company_column = 0
 position_column = 1
@@ -12,9 +11,12 @@ status_column = 2
 date_column = 3
 notes_column = 4
 
+
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, database_string):
         super().__init__()
+        self.database_string = database_string
+        self.application_database = Database.Database(database_string)
         self.setWindowTitle('Application-Tracker')
         self.resize(900, 600)
         self.createTable()
@@ -33,12 +35,11 @@ class MainWindow(QMainWindow):
     def handle_cell_change(self, row, column):
         newField = self.tableWidget.item(row, column)
         if self.currentCompany and self.currentField is not None and self.currentField != newField.text():
-            application_database.update_field(self.currentCompany, self.currentField, newField.text())
-
+            self.application_database.update_field(self.currentCompany, self.currentField, newField.text())
 
     def createTable(self):
 
-        application_count = application_database.getApplicationCount()
+        application_count = self.application_database.getApplicationCount()
         print(application_count)
 
         if application_count > 0:
@@ -62,7 +63,7 @@ class MainWindow(QMainWindow):
             self.tableWidget.horizontalHeader().setSectionResizeMode(notes_column, QHeaderView.Stretch)
 
     def initializeApplications(self):
-        all_applications = application_database.get_all_applications()
+        all_applications = self.application_database.get_all_applications()
 
         row_index = 0
 
@@ -73,17 +74,17 @@ class MainWindow(QMainWindow):
             date_applied = application[4]
             notes = application[5]
 
-            self.tableWidget.setItem(row_index, company_column, QTableWidgetItem(company)) # Company
-            self.tableWidget.setItem(row_index, position_column, QTableWidgetItem(position)) # Position
-            self.tableWidget.setItem(row_index, status_column, QTableWidgetItem(status)) # Status
-            self.tableWidget.setItem(row_index, date_column, QTableWidgetItem(date_applied)) # Date_Applied
-            self.tableWidget.setItem(row_index, notes_column, QTableWidgetItem(notes)) # Notes
+            self.tableWidget.setItem(row_index, company_column, QTableWidgetItem(company))  # Company
+            self.tableWidget.setItem(row_index, position_column, QTableWidgetItem(position))  # Position
+            self.tableWidget.setItem(row_index, status_column, QTableWidgetItem(status))  # Status
+            self.tableWidget.setItem(row_index, date_column, QTableWidgetItem(date_applied))  # Date_Applied
+            self.tableWidget.setItem(row_index, notes_column, QTableWidgetItem(notes))  # Notes
 
             row_index += 1
 
 
-def main():
+def main(database_string):
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = MainWindow(database_string)
     window.show()
     sys.exit(app.exec_())
