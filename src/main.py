@@ -3,7 +3,7 @@ from datetime import datetime
 from src import Database
 from src import ui
 
-application_database = Database.Database()
+application_database = Database.Database("../database/application_database.db")
 
 
 # Prompts given to the user when the application starts

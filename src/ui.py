@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem,
 from PyQt5.QtCore import Qt
 
 from src import Database
-application_database = Database.Database()
+application_database = Database.Database("../database/application_database.db")
 
 company_column = 0
 position_column = 1
