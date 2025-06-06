@@ -18,7 +18,6 @@ class Database:
             cursor = connection.cursor()
             cursor.execute(create_table_query)
             connection.commit()
-            print("Application Database intialized successfully")
 
     def insert_application(self, company, position, status, date_applied, notes):
         with sqlite3.connect(self.DATABASE_STRING) as connection:
