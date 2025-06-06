@@ -3,8 +3,24 @@ from datetime import datetime
 from src import Database
 from src import ui
 
-application_database = Database.Database("../database/application_database.db")
+internship_database = Database.Database("../database/internship_database.db")
+job_database = Database.Database("../database/job_database.db")
 
+current_database = None
+
+# Determines whether we use internship or job database
+def select_database():
+    global current_database
+
+    database_input = input("Select Database: \n1. Job Database\n2. Internship Database\n")
+    if database_input == "1":
+        current_database = job_database
+        print("\nYou selected Job Database!\n")
+    elif database_input == "2":
+        current_database = internship_database
+        print("\nYou selected Internship Database!\n")
+    else:
+        print("Invalid Input, try again")
 
 # Prompts given to the user when the application starts
 def starting_prompt():
@@ -17,7 +33,7 @@ def starting_prompt():
     elif starting_input == "3":
         remove_application()
     elif starting_input == "4":
-        number_of_applications = application_database.getApplicationCount()
+        number_of_applications = current_database.getApplicationCount()
         if number_of_applications > 0:
             ui.main()
         else:
@@ -42,7 +58,7 @@ def prompt_to_dictionary(prompt, field):
 
 # Input data from dictionary to database
 def dictionary_to_database():
-    application_database.insert_application(
+    current_database.insert_application(
         ApplicationDictionary["company"], ApplicationDictionary["position"],
         ApplicationDictionary["status"], ApplicationDictionary["date_applied"],
         ApplicationDictionary["notes"]
@@ -70,7 +86,7 @@ def add_application():
 
 
 def get_application_from_input():
-    all_applications = application_database.get_all_companies()
+    all_applications = current_database.get_all_companies()
 
     for i in range(len(all_applications)):
         print(f"{i} - {all_applications[i][0]}")
@@ -102,7 +118,7 @@ def update_application():
 
     updated_field = input(f"\nEnter your desired change for {selected_application}'s {selected_field}: ")
 
-    application_database.update_field(selected_application, selected_field, updated_field)
+    current_database.update_field(selected_application, selected_field, updated_field)
 
 
 def remove_application():
@@ -110,12 +126,12 @@ def remove_application():
 
     selected_application = get_application_from_input()
 
-    application_database.delete_application(selected_application)
+    current_database.delete_application(selected_application)
 
 
 def main():
+    select_database()
     starting_prompt()
-
 
 if __name__ == "__main__":
     main()
