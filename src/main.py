@@ -3,24 +3,28 @@ from datetime import datetime
 from src import Database
 from src import ui
 
-internship_database = Database.Database("../database/internship_database.db")
-job_database = Database.Database("../database/job_database.db")
+internship_database_string = "../database/internship_database.db"
+job_database_string = "../database/job_database.db"
 
+current_string = None
 current_database = None
 
 # Determines whether we use internship or job database
 def select_database():
     global current_database
+    global current_string
 
     database_input = input("Select Database: \n1. Job Database\n2. Internship Database\n")
     if database_input == "1":
-        current_database = job_database
+        current_string = job_database_string
         print("\nYou selected Job Database!\n")
     elif database_input == "2":
-        current_database = internship_database
+        current_string = internship_database_string
         print("\nYou selected Internship Database!\n")
     else:
         print("Invalid Input, try again")
+
+    current_database = Database.Database(current_string)
 
 # Prompts given to the user when the application starts
 def starting_prompt():
@@ -35,7 +39,7 @@ def starting_prompt():
     elif starting_input == "4":
         number_of_applications = current_database.getApplicationCount()
         if number_of_applications > 0:
-            ui.main()
+            ui.main(current_string)
         else:
             print("\nNo applications, you must add one first. Try again.\n")
             starting_prompt()
