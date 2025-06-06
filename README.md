@@ -20,7 +20,7 @@ cd Application-Tracker
 
 2. Run the application
 ```
-python src/main.py
+python3 src/main.py
 ```
 
 3. Follow the prompts in the terminal to manage your internship applications
