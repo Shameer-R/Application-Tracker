@@ -11,7 +11,6 @@ status_column = 2
 date_column = 3
 notes_column = 4
 
-
 class MainWindow(QMainWindow):
     def __init__(self, database_string):
         super().__init__()
@@ -57,9 +56,8 @@ class MainWindow(QMainWindow):
 
         self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(application_count)
-        self.tableWidget.setColumnCount(5)
-        self.tableWidget.setHorizontalHeaderLabels(["Company", "Position", "Status", "Date Applied", "Notes"])
-        self.tableWidget.horizontalHeader().setStretchLastSection(True)
+        self.tableWidget.setColumnCount(6)
+        self.tableWidget.setHorizontalHeaderLabels(["Company", "Position", "Status", "Date Applied", "Notes", "Delete"])
         self.tableWidget.setWordWrap(True)
         self.tableWidget.setHorizontalScrollMode(QTableWidget.ScrollPerPixel)
         self.tableWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -75,7 +73,9 @@ class MainWindow(QMainWindow):
         self.tableWidget.setColumnWidth(status_column, 65)
         self.tableWidget.setColumnWidth(date_column, 95)
         self.tableWidget.setColumnWidth(notes_column, 100)
+        self.tableWidget.setColumnWidth(5, 25)
         self.tableWidget.horizontalHeader().setSectionResizeMode(notes_column, QHeaderView.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeToContents)
 
         # Add table widget to layout
         self.layout.addWidget(self.tableWidget)
@@ -109,11 +109,28 @@ class MainWindow(QMainWindow):
             self.tableWidget.setItem(row_index, date_column, QTableWidgetItem(date_applied))  # Date_Applied
             self.tableWidget.setItem(row_index, notes_column, QTableWidgetItem(notes))  # Notes
 
+            delete_button = QPushButton("Delete")
+            delete_button.clicked.connect(lambda checked, company_name=company: self.delete_application(company_name))
+            self.tableWidget.setCellWidget(row_index, 5, delete_button)
+
             row_index += 1
 
     def open_add_application_window(self):
         dialog = AddApplicationDialog(self.database_string, self.application_database, self.refresh_window)
         dialog.exec_()
+
+    def delete_application(self, company_name):
+        reply = QMessageBox.question(
+            self,
+            "Confirm Deletion",
+            f"Are you sure you want to delete the application for {company_name}?",
+            QMessageBox.No | QMessageBox.Yes,
+            QMessageBox.No
+        )
+
+        if reply == QMessageBox.Yes:
+            self.application_database.delete_application(company_name)
+            self.refresh_window()
 
 
 class AddApplicationDialog(QDialog):
@@ -170,3 +187,6 @@ def main(database_string):
     window = MainWindow(database_string)
     window.show()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main("../database/internship_database.db")
