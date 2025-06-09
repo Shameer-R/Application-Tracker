@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem, QTableWidget, QTableWidgetItem, \
-    QHeaderView
+    QHeaderView, QPushButton, QWidget, QVBoxLayout
 from PyQt5.QtCore import Qt
 
 from src import Database
@@ -19,11 +19,25 @@ class MainWindow(QMainWindow):
         self.application_database = Database.Database(database_string)
         self.setWindowTitle('Application-Tracker')
         self.resize(900, 600)
-        self.createTable()
-        self.tableWidget.cellClicked.connect(self.getCurrentCompany)
-        self.tableWidget.cellChanged.connect(self.handle_cell_change)
+        self.initUI()
         self.currentCompany = None
         self.currentField = None
+
+    def initUI(self):
+        # Create central widget
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+
+        # Create vertical layout
+        self.layout = QVBoxLayout()
+        central_widget.setLayout(self.layout)
+
+        # Create Table
+        self.createTable()
+
+        # Create Button
+        self.createButton()
+
 
     def getCurrentCompany(self, row, column):
         company = self.tableWidget.item(row, company_column)
@@ -51,8 +65,11 @@ class MainWindow(QMainWindow):
             self.tableWidget.setWordWrap(True)
             self.tableWidget.setHorizontalScrollMode(QTableWidget.ScrollPerPixel)
             self.tableWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-            self.setCentralWidget(self.tableWidget)
             self.initializeApplications()
+
+            # Table Event Handlers
+            self.tableWidget.cellClicked.connect(self.getCurrentCompany)
+            self.tableWidget.cellChanged.connect(self.handle_cell_change)
 
             # Set Column Width
             self.tableWidget.setColumnWidth(company_column, 200)
@@ -61,6 +78,14 @@ class MainWindow(QMainWindow):
             self.tableWidget.setColumnWidth(date_column, 95)
             self.tableWidget.setColumnWidth(notes_column, 100)
             self.tableWidget.horizontalHeader().setSectionResizeMode(notes_column, QHeaderView.Stretch)
+
+            # Add table widget to layout
+            self.layout.addWidget(self.tableWidget)
+
+    def createButton(self):
+        button = QPushButton("Add")
+        button.clicked.connect(self.open_add_application_window)
+        self.layout.addWidget(button)
 
     def initializeApplications(self):
         all_applications = self.application_database.get_all_applications()
@@ -82,9 +107,15 @@ class MainWindow(QMainWindow):
 
             row_index += 1
 
+    def open_add_application_window(self):
+        print("bruh")
+
+
 
 def main(database_string):
     app = QApplication(sys.argv)
     window = MainWindow(database_string)
     window.show()
     sys.exit(app.exec_())
+
+main("../database/internship_database.db")
