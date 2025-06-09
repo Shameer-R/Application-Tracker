@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem, QTableWidget, QTableWidgetItem, \
     QHeaderView, QPushButton, QWidget, QVBoxLayout, QDialog, QFormLayout, QLineEdit, QMessageBox
 from PyQt5.QtCore import Qt
+from PyQt5 import QtGui
 
 from src import Database
 import src.main
@@ -114,6 +115,16 @@ class MainWindow(QMainWindow):
             delete_button = QPushButton("Delete")
             delete_button.clicked.connect(lambda checked, company_name=company: self.delete_application(company_name))
             self.tableWidget.setCellWidget(row_index, 5, delete_button)
+
+            # Format status cell
+            status_item = QTableWidgetItem(status)
+
+            if status.lower() == "interviewing":
+                status_item.setForeground(QtGui.QColor("orange"))
+            elif status.lower() == "accepted":
+                status_item.setForeground(QtGui.QColor("green"))
+
+            self.tableWidget.setItem(row_index, status_column, status_item)
 
             row_index += 1
 
