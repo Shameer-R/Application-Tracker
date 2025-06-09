@@ -1,12 +1,12 @@
 # Application-Tracker
 
-I'm building this application to help keep track of internship applications.
+I'm building this application to help keep track of internship/job applications.
 
 ## Overview
 
 The Application Tracker lets you:
 
-- Add new internship applications.
+- Add new applications.
 - View all your applications.
 - Update application details or status.
 - Delete applications if needed.
