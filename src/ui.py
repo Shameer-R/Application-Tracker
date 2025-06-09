@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem,
 from PyQt5.QtCore import Qt
 
 from src import Database
+import src.main
+
 
 company_column = 0
 position_column = 1
@@ -147,14 +149,10 @@ class AddApplicationDialog(QDialog):
 
         self.company_input = QLineEdit()
         self.position_input = QLineEdit()
-        self.status_input = QLineEdit()
-        self.date_input = QLineEdit()
         self.notes_input = QLineEdit()
 
         self.form_layout.addRow("Company: ", self.company_input)
         self.form_layout.addRow("Position: ", self.position_input)
-        self.form_layout.addRow("Status: ", self.status_input)
-        self.form_layout.addRow("Date Applied: ", self.date_input)
         self.form_layout.addRow("Notes: ", self.notes_input)
 
         self.layout.addLayout(self.form_layout)
@@ -168,15 +166,13 @@ class AddApplicationDialog(QDialog):
     def submit_form(self):
         company_input = self.company_input.text()
         position_input = self.position_input.text()
-        status_input = self.status_input.text()
-        date_input = self.date_input.text()
         notes_input = self.notes_input.text()
 
-        if not all([company_input, position_input, status_input, date_input]):
+        if not all([company_input, position_input]):
             QMessageBox.warning(self, "Error", "Please fill in all required fields")
         else:
-            self.application_database.insert_application(company_input, position_input, status_input,
-                                                         date_input, notes_input)
+            self.application_database.insert_application(company_input, position_input, "Pending",
+                                                         src.main.format_todays_date(), notes_input)
             self.refresh_window()
 
             self.accept()
