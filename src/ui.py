@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem, QTableWidget, QTableWidgetItem, \
-    QHeaderView
+    QHeaderView, QPushButton, QWidget, QVBoxLayout, QDialog, QFormLayout, QLineEdit, QMessageBox
 from PyQt5.QtCore import Qt
 
 from src import Database
@@ -19,11 +19,24 @@ class MainWindow(QMainWindow):
         self.application_database = Database.Database(database_string)
         self.setWindowTitle('Application-Tracker')
         self.resize(900, 600)
-        self.createTable()
-        self.tableWidget.cellClicked.connect(self.getCurrentCompany)
-        self.tableWidget.cellChanged.connect(self.handle_cell_change)
+        self.initUI()
         self.currentCompany = None
         self.currentField = None
+
+    def initUI(self):
+        # Create central widget
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+
+        # Create vertical layout
+        self.layout = QVBoxLayout()
+        central_widget.setLayout(self.layout)
+
+        # Create Table
+        self.createTable()
+
+        # Create Button
+        self.createButton()
 
     def getCurrentCompany(self, row, column):
         company = self.tableWidget.item(row, company_column)
@@ -42,28 +55,44 @@ class MainWindow(QMainWindow):
         application_count = self.application_database.getApplicationCount()
         print(application_count)
 
-        if application_count > 0:
-            self.tableWidget = QTableWidget()
-            self.tableWidget.setRowCount(application_count)
-            self.tableWidget.setColumnCount(5)
-            self.tableWidget.setHorizontalHeaderLabels(["Company", "Position", "Status", "Date Applied", "Notes"])
-            self.tableWidget.horizontalHeader().setStretchLastSection(True)
-            self.tableWidget.setWordWrap(True)
-            self.tableWidget.setHorizontalScrollMode(QTableWidget.ScrollPerPixel)
-            self.tableWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-            self.setCentralWidget(self.tableWidget)
-            self.initializeApplications()
+        self.tableWidget = QTableWidget()
+        self.tableWidget.setRowCount(application_count)
+        self.tableWidget.setColumnCount(5)
+        self.tableWidget.setHorizontalHeaderLabels(["Company", "Position", "Status", "Date Applied", "Notes"])
+        self.tableWidget.horizontalHeader().setStretchLastSection(True)
+        self.tableWidget.setWordWrap(True)
+        self.tableWidget.setHorizontalScrollMode(QTableWidget.ScrollPerPixel)
+        self.tableWidget.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.initializeApplications()
 
-            # Set Column Width
-            self.tableWidget.setColumnWidth(company_column, 200)
-            self.tableWidget.setColumnWidth(position_column, 300)
-            self.tableWidget.setColumnWidth(status_column, 65)
-            self.tableWidget.setColumnWidth(date_column, 95)
-            self.tableWidget.setColumnWidth(notes_column, 100)
-            self.tableWidget.horizontalHeader().setSectionResizeMode(notes_column, QHeaderView.Stretch)
+        # Table Event Handlers
+        self.tableWidget.cellClicked.connect(self.getCurrentCompany)
+        self.tableWidget.cellChanged.connect(self.handle_cell_change)
+
+        # Set Column Width
+        self.tableWidget.setColumnWidth(company_column, 200)
+        self.tableWidget.setColumnWidth(position_column, 300)
+        self.tableWidget.setColumnWidth(status_column, 65)
+        self.tableWidget.setColumnWidth(date_column, 95)
+        self.tableWidget.setColumnWidth(notes_column, 100)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(notes_column, QHeaderView.Stretch)
+
+        # Add table widget to layout
+        self.layout.addWidget(self.tableWidget)
+
+    def createButton(self):
+        button = QPushButton("Add")
+        button.clicked.connect(self.open_add_application_window)
+        self.layout.addWidget(button)
+
+    def refresh_window(self):
+        self.tableWidget.setRowCount(0)  # Clear rows
+        self.initializeApplications()
 
     def initializeApplications(self):
         all_applications = self.application_database.get_all_applications()
+        application_count = len(all_applications)
+        self.tableWidget.setRowCount(application_count)
 
         row_index = 0
 
@@ -81,6 +110,59 @@ class MainWindow(QMainWindow):
             self.tableWidget.setItem(row_index, notes_column, QTableWidgetItem(notes))  # Notes
 
             row_index += 1
+
+    def open_add_application_window(self):
+        dialog = AddApplicationDialog(self.database_string, self.application_database, self.refresh_window)
+        dialog.exec_()
+
+
+class AddApplicationDialog(QDialog):
+    def __init__(self, database_string, application_database, refresh_window):
+        super().__init__()
+        self.database_string = database_string
+        self.application_database = application_database
+        self.refresh_window = refresh_window
+
+        self.setWindowTitle("Add application")
+
+        self.layout = QVBoxLayout()
+        self.form_layout = QFormLayout()
+
+        self.company_input = QLineEdit()
+        self.position_input = QLineEdit()
+        self.status_input = QLineEdit()
+        self.date_input = QLineEdit()
+        self.notes_input = QLineEdit()
+
+        self.form_layout.addRow("Company: ", self.company_input)
+        self.form_layout.addRow("Position: ", self.position_input)
+        self.form_layout.addRow("Status: ", self.status_input)
+        self.form_layout.addRow("Date Applied: ", self.date_input)
+        self.form_layout.addRow("Notes: ", self.notes_input)
+
+        self.layout.addLayout(self.form_layout)
+
+        self.submit_button = QPushButton("Submit")
+        self.submit_button.clicked.connect(self.submit_form)
+        self.layout.addWidget(self.submit_button)
+
+        self.setLayout(self.layout)
+
+    def submit_form(self):
+        company_input = self.company_input.text()
+        position_input = self.position_input.text()
+        status_input = self.status_input.text()
+        date_input = self.date_input.text()
+        notes_input = self.notes_input.text()
+
+        if not all([company_input, position_input, status_input, date_input]):
+            QMessageBox.warning(self, "Error", "Please fill in all required fields")
+        else:
+            self.application_database.insert_application(company_input, position_input, status_input,
+                                                         date_input, notes_input)
+            self.refresh_window()
+
+            self.accept()
 
 
 def main(database_string):
