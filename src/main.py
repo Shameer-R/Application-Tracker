@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from src import Database
-from src import ui
+import Database
+import ui
 
 internship_database_string = "../database/internship_database.db"
 job_database_string = "../database/job_database.db"

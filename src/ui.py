@@ -1,4 +1,7 @@
+import math
 import sys
+from datetime import datetime
+
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QTableWidgetItem, QTableWidget, QTableWidgetItem, \
     QHeaderView, QPushButton, QWidget, QVBoxLayout, QDialog, QFormLayout, QLineEdit, QMessageBox
 from PyQt5.QtCore import Qt
@@ -13,6 +16,16 @@ position_column = 1
 status_column = 2
 date_column = 3
 notes_column = 4
+
+def get_weeks_from_date(date_str):
+    today_date_str = src.main.format_todays_date()
+
+    date1 = datetime.strptime(date_str, "%Y-%m-%d")
+    date2 = datetime.strptime(today_date_str, "%Y-%m-%d")
+
+    delta_days = (date2 - date1).days
+
+    return math.floor(int(delta_days/7))
 
 class MainWindow(QMainWindow):
     def __init__(self, database_string):
@@ -55,7 +68,6 @@ class MainWindow(QMainWindow):
     def createTable(self):
 
         application_count = self.application_database.getApplicationCount()
-        print(application_count)
 
         self.tableWidget = QTableWidget()
         self.tableWidget.setRowCount(application_count)
@@ -116,6 +128,11 @@ class MainWindow(QMainWindow):
             delete_button.clicked.connect(lambda checked, company_name=company: self.delete_application(company_name))
             self.tableWidget.setCellWidget(row_index, 5, delete_button)
 
+            # Set status based on date
+            if get_weeks_from_date(date_applied) >= 4 and status.lower() == "pending":
+                # If it has been 4 weeks since you applied set status to unlikely
+                self.application_database.update_field(company, "status", "Unlikely")
+
             # Format status cell
             status_item = QTableWidgetItem(status)
 
@@ -123,6 +140,10 @@ class MainWindow(QMainWindow):
                 status_item.setForeground(QtGui.QColor("orange"))
             elif status.lower() == "accepted":
                 status_item.setForeground(QtGui.QColor("green"))
+            elif status.lower() == "rejected":
+                status_item.setForeground(QtGui.QColor("red"))
+            elif status.lower() == "unlikely":
+                status_item.setForeground(QtGui.QColor("gray"))
 
             self.tableWidget.setItem(row_index, status_column, status_item)
 
@@ -187,7 +208,6 @@ class AddApplicationDialog(QDialog):
             self.refresh_window()
 
             self.accept()
-
 
 def main(database_string):
     app = QApplication(sys.argv)
